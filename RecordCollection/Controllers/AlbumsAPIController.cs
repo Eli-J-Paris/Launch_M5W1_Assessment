@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecordCollection.DataAccess;
+using Serilog;
 
 namespace RecordCollection.Controllers
 {
@@ -18,6 +19,8 @@ namespace RecordCollection.Controllers
         public IActionResult GetAll()
         {
             var albums = _context.Albums.ToList();
+            Log.Information("All albums were requested");
+
             return new JsonResult(albums);
         }
 
@@ -25,6 +28,11 @@ namespace RecordCollection.Controllers
         public IActionResult GetOne(int id)
         {
             var album = _context.Albums.FirstOrDefault(a => a.Id == id);
+            if(album== null)
+            {
+                Log.Warning("Album was not found");
+                return BadRequest();
+            }
             return new JsonResult(album);
         }
 
@@ -33,6 +41,7 @@ namespace RecordCollection.Controllers
         {
             var album = _context.Albums.FirstOrDefault(a => a.Id == id);
             _context.Albums.Remove(album);
+            Log.Fatal($"Success! {album.Title} was removed from the database.");
             _context.SaveChanges();
         }
     }
