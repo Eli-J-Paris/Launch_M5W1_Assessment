@@ -41,4 +41,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/MyApp.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+
 app.Run();
